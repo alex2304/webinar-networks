@@ -16,10 +16,10 @@ Vagrant.configure("2") do |config|
     # Задайте правильные адреса на внешних и внутренних интерфейсах роутеров
     # формат:  "имя ВМ" => { "int_ip" => "Адрес в сети Офиса", "ext_ip" => "Адрес в сети для WG", "vagrant_ip" => "Адрес для работы с ансиблом" },
     routers = {
-        "router-1" => { "int_ip" => "AAA.AAA.AAA.AAA", "ext_ip" => "BBB.BBB.BBB.BBB", "vagrant_ip" => "CCC.CCC.CCC.CCC" },
-        "router-2" => { "int_ip" => "AAA.AAA.AAA.AAA", "ext_ip" => "BBB.BBB.BBB.BBB", "vagrant_ip" => "CCC.CCC.CCC.CCC" },
-        "router-3" => { "int_ip" => "AAA.AAA.AAA.AAA", "ext_ip" => "BBB.BBB.BBB.BBB", "vagrant_ip" => "CCC.CCC.CCC.CCC" }, 
-        "router-4" => { "int_ip" => "AAA.AAA.AAA.AAA", "ext_ip" => "BBB.BBB.BBB.BBB", "vagrant_ip" => "CCC.CCC.CCC.CCC" }
+        "router-1" => { "int_ip" => "192.168.1.1", "ext_ip" => "192.168.0.1", "vagrant_ip" => "CCC.CCC.CCC.CCC" },
+        "router-2" => { "int_ip" => "192.168.2.1", "ext_ip" => "192.168.0.2", "vagrant_ip" => "CCC.CCC.CCC.CCC" },
+        "router-3" => { "int_ip" => "192.168.3.1", "ext_ip" => "192.168.0.3", "vagrant_ip" => "CCC.CCC.CCC.CCC" }, 
+        "router-4" => { "int_ip" => "192.168.10.1", "ext_ip" => "192.168.0.4", "vagrant_ip" => "CCC.CCC.CCC.CCC" }
     }
 
     routers.each do |name, ip_addr|
@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
             router.vm.hostname = name
             router.vm.network "private_network", ip: ip_addr["int_ip"], virtualbox__intnet: name  # Сеть для хоста 
             router.vm.network "private_network", ip: ip_addr["ext_ip"], virtualbox__intnet: "net-router"  # Промежуточная сеть
-            router.vm.network "private_network", ip: ip_addr["vagrant_ip"] # Сеть для работы ансибла как провиженера
+            # router.vm.network "private_network", ip: ip_addr["vagrant_ip"] # Сеть для работы ансибла как провиженера
             # router.vm.provision "ansible" do |ansible|
             #     ansible.playbook = "ansible/routers.playbook.yml"
             #     ansible.inventory_path = "ansible/inventory.yml"
@@ -44,9 +44,9 @@ Vagrant.configure("2") do |config|
     # Задайте правильные адреса для представителей офисов
     # формат:  "имя ВМ" => { "ip" => "адрес в сети офиса", "name" => "имя сети к которой подключается (к какому роутеру)", "getaway" => "адрес офисного роутера который открывает выход в впн сети" },
     offices = {
-        "office-1" => { "ip" => "ССС.ССС.ССС.ССС", "name" => "router-1", "getaway" => "AAA.AAA.AAA.AAA" },
-        "office-2" => { "ip" => "ССС.ССС.ССС.ССС", "name" => "router-2", "getaway" => "AAA.AAA.AAA.AAA" },
-        "office-3" => { "ip" => "ССС.ССС.ССС.ССС", "name" => "router-3", "getaway" => "AAA.AAA.AAA.AAA" }
+        "office-1" => { "ip" => "192.168.1.2", "name" => "router-1", "getaway" => "192.168.0.1" },
+        "office-2" => { "ip" => "192.168.2.2", "name" => "router-2", "getaway" => "192.168.0.2" },
+        "office-3" => { "ip" => "192.168.3.2", "name" => "router-3", "getaway" => "192.168.0.3" }
     }
 
     offices.each do |name, network|
@@ -69,8 +69,8 @@ Vagrant.configure("2") do |config|
     #  OpenVPN клиент
     config.vm.define "client" do |client|
         client.vm.hostname = "client"
-        client.vm.network "private_network", ip: "XXX.XXX.XXX.XXX", virtualbox__intnet: "router-4" # 
-        client.vm.network "private_network", ip: "CCC.CCC.CCC.CCC" # Сеть для работы ансибла как провиженера
+        client.vm.network "private_network", ip: "192.168.10.2", virtualbox__intnet: "router-4" # 
+        # client.vm.network "private_network", ip: "CCC.CCC.CCC.CCC" # Сеть для работы ансибла как провиженера
         # client.vm.provision "ansible" do |ansible|
         #     ansible.playbook = "ansible/client.playbook.yml"
         # end
