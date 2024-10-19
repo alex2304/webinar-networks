@@ -80,9 +80,9 @@ Vagrant.configure("2") do |config|
             vb.cpus = machine_resources["client"]["cpus"]
         end
         # Ставим дополнтельные утилиты для проверки маршрутизации
-        client.vm.provision "shell", inline: <<-SHELL
-            sudo apt install -y traceroute mtr
-        SHELL
+        # client.vm.provision "shell", inline: <<-SHELL
+        #     sudo apt install -y traceroute mtr
+        # SHELL
     end
   
 end    
